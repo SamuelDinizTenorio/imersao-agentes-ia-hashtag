@@ -1,0 +1,45 @@
+# =========================
+# Git / VCS
+# =========================
+.git
+.gitignore
+
+# =========================
+# Variáveis de ambiente
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Backups e dados locais
+# =========================
+backup
+*.tar
+*.tar.gz
+*.gpg
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# SO / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# =========================
+# Node / Build
+# =========================
+node_modules
+npm-debug.log
+yarn-error.log
+
+# =========================
+# Docker
+# =========================
+docker-compose.override.yml
