@@ -19,8 +19,11 @@ jobs:
           test -f .env.example || (echo "❌ .env.example ausente" && exit 1)
           test -f .gitignore || (echo "❌ .gitignore ausente" && exit 1)
 
+      - name: Preparar .env temporário para validação
+        run: cp .env.example .env
+
       - name: Validar Sintaxe Docker
-        run: docker compose --env-file .env.example config --quiet
+        run: docker compose config --quiet
 
   # Job 2: Valida os fluxos do n8n (JSONs)
   workflow-check:
