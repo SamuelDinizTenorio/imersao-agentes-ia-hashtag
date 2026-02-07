@@ -1,0 +1,49 @@
+name: CI - n8n workflows & Infra Validation
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  # Job 1: Valida a infraestrutura (Docker e Makefile)
+  infra-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Verificar arquivos base
+        run: |
+          test -f docker-compose.yml || (echo "❌ docker-compose.yml ausente" && exit 1)
+          test -f Makefile || (echo "❌ Makefile ausente" && exit 1)
+          test -f .env.example || (echo "❌ .env.example ausente" && exit 1)
+          test -f .gitignore || (echo "❌ .gitignore ausente" && exit 1)
+
+      - name: Validar Sintaxe Docker
+        run: docker compose config --quiet
+
+  # Job 2: Valida os fluxos do n8n (JSONs)
+  workflow-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar JSONs (Recursivo)
+        run: |
+          find workflows -name "*.json" -type f | while read file; do
+            echo "🔍 Validando $file"
+            jq empty "$file" || (echo "❌ JSON inválido em $file" && exit 1)
+          done
+
+  # Job 3: Segurança (Gitleaks com modo padrão)
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        

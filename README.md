@@ -1,5 +1,9 @@
 # 🤖 Imersão Agentes de IA - Hashtag Treinamentos
 
+![CI Status](https://github.com/SamuelDinizTenorio/imersao-agentes-ia-hashtag/actions/workflows/ci.yml/badge.svg)
+[![n8n](https://img.shields.io/badge/n8n-v1.0+-FF6C37?logo=n8n&logoColor=white)](https://n8n.io/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+
 Bem-vindo ao meu repositório de estudos da **Imersão Agentes de IA**. Aqui, organizo e versiono workflows do **n8n** focados em produtividade e automação inteligente, utilizando uma infraestrutura local robusta e segura.
 
 ## 🏗️ Infraestrutura e Tecnologias
@@ -43,7 +47,39 @@ O gerenciamento do projeto é feito de forma simplificada através do terminal:
 
 Cada aula da imersão possui sua própria pasta com o workflow exportado e documentação específica:
 
+### 📁 [Aula 01 - Criando seu primeiro agente de IA com n8n](./workflows/aula-01)
+* **Descrição**: Um agente autônomo que monitora o Gmail, filtra mensagens e utiliza o **Google Gemini** para responder dúvidas sobre os cursos da Hashtag Treinamentos.
+* **Destaques Técnicos**: 
+    * **Memory Buffer**: Retenção de contexto para conversas contínuas (Thread ID).
+    * **System Prompt**: Engenharia de prompt para respostas em HTML estruturado.
+    * **Filtro de Segurança**: Evita loops de resposta em domínios internos.
+* **Arquivo Principal**: [`n8n-gmail-agent-ai.json`](./workflows/aula-01/n8n-gmail-agent.json)
+
 *(Próximas aulas serão adicionadas aqui)*
+
+---
+
+## ⚙️ CI/CD & Automação de Qualidade
+
+Este projeto utiliza **GitHub Actions** para garantir que a infraestrutura e as automações estejam sempre operacionais e seguras. O pipeline de Integração Contínua (CI) é executado automaticamente em cada `push` para a branch `main` ou na abertura de **Pull Requests**.
+
+### O que o Pipeline valida:
+
+* **🛡️ Segurança (DevSecOps)**: Utiliza o **Gitleaks** para auditar todo o histórico de commits à procura de chaves de API ou segredos expostos (como tokens do Gemini ou Gmail).
+* **🏗️ Integridade da Infraestrutura**: Verifica se os arquivos essenciais (`docker-compose.yml`, `Makefile`, `.env.example`, etc.) estão presentes e se a sintaxe do Docker está correta.
+* **🤖 Validação de Workflows (n8n)**: Realiza uma varredura recursiva em todas as subpastas de `workflows/`. Utiliza a ferramenta `jq` para validar a integridade de cada arquivo JSON, garantindo que nenhum fluxo corrompido seja versionado.
+
+
+
+> [!IMPORTANT]
+> O pipeline utiliza a configuração **`fetch-depth: 0`**, permitindo que o Gitleaks analise não apenas o código atual, mas todo o rastro histórico do repositório para garantir 100% de privacidade das credenciais.
+
+### Como visualizar o status:
+
+Você pode acompanhar a execução dos testes clicando na aba **Actions** do repositório. O pipeline está dividido em três jobs independentes:
+1.  `infra-check`: Valida arquivos de configuração e Docker.
+2.  `workflow-check`: Valida a integridade dos arquivos `.json`.
+3.  `security`: Executa o scanning de segredos.
 
 ---
 
@@ -58,11 +94,14 @@ Para manter este repositório seguro e limpo:
 
 ## 🚀 Como Executar
 
-1.  Certifique-se de ter o **Docker** e o **Make** instalados no seu WSL/Linux.
-2.  Clone o repositório.
-3.  Configure seu arquivo `.env` (use o `make doctor` para validar seu ambiente).
+1.  Clone o repositório em um ambiente Linux/WSL.
+2.  Configure seu `.env` baseando-se no `.env.example`.
+3.  Execute a verificação inicial:
+    ```bash
+    make doctor
+    ```
 4.  Suba o ambiente:
     ```bash
     make up
     ```
-5.  Acesse o n8n em `http://localhost:5678`.
+5.  Acesse o n8n em: `http://localhost:5678`
