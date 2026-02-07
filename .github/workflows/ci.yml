@@ -20,7 +20,7 @@ jobs:
           test -f .gitignore || (echo "❌ .gitignore ausente" && exit 1)
 
       - name: Validar Sintaxe Docker
-        run: docker compose config --quiet
+        run: docker compose --env-file .env.example config --quiet
 
   # Job 2: Valida os fluxos do n8n (JSONs)
   workflow-check:
