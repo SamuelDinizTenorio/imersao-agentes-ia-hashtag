@@ -53,7 +53,7 @@ Cada aula da imersão possui sua própria pasta com o workflow exportado e docum
     * **Memory Buffer**: Retenção de contexto para conversas contínuas (Thread ID).
     * **System Prompt**: Engenharia de prompt para respostas em HTML estruturado.
     * **Filtro de Segurança**: Evita loops de resposta em domínios internos.
-* **Arquivo Principal**: [`gmail-customer-support-agent.json`](./workflows/aula-01/gmail-customer-support-agent.json)
+* **Arquivo Principal**: [`gmail-customer-support-agent.json`](./workflows/lesson-01/gmail-customer-support-agent.json)
 
 ### 📁 [Aula 02 - Agente de Reembolso Inteligente](./workflows/lesson-02)
 * **Descrição**: Sistema de triagem automática de reembolsos que combina análise de sentimento com regras de negócio complexas.
