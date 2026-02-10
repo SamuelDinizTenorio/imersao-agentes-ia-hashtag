@@ -47,15 +47,33 @@ O gerenciamento do projeto é feito de forma simplificada através do terminal:
 
 Cada aula da imersão possui sua própria pasta com o workflow exportado e documentação específica:
 
-### 📁 [Aula 01 - Criando seu primeiro agente de IA com n8n](./workflows/aula-01)
+### 📁 [Aula 01 - Criando seu primeiro agente de IA com n8n](./workflows/lesson-01)
 * **Descrição**: Um agente autônomo que monitora o Gmail, filtra mensagens e utiliza o **Google Gemini** para responder dúvidas sobre os cursos da Hashtag Treinamentos.
 * **Destaques Técnicos**: 
     * **Memory Buffer**: Retenção de contexto para conversas contínuas (Thread ID).
     * **System Prompt**: Engenharia de prompt para respostas em HTML estruturado.
     * **Filtro de Segurança**: Evita loops de resposta em domínios internos.
-* **Arquivo Principal**: [`n8n-gmail-agent-ai.json`](./workflows/aula-01/n8n-gmail-agent.json)
+* **Arquivo Principal**: [`gmail-customer-support-agent.json`](./workflows/aula-01/gmail-customer-support-agent.json)
+
+### 📁 [Aula 02 - Agente de Reembolso Inteligente](./workflows/lesson-02)
+* **Descrição**: Sistema de triagem automática de reembolsos que combina análise de sentimento com regras de negócio complexas.
+* **Destaques Técnicos**: 
+    * **Multi-Step Logic**: Árvore de decisão baseada em prazo de garantia, valor do cliente (VIP) e tom da mensagem.
+    * **Data Enrichment**: Integração com Google Sheets para validação de dados históricos em tempo real.
+    * **Multichannel Output**: Respostas personalizadas via Gmail e alertas críticos via Telegram.
+* **Arquivo Principal**: [`process-refund-logic-agent`](./workflows/lesson-02/process-refund-logic-agent.json)
 
 *(Próximas aulas serão adicionadas aqui)*
+
+---
+
+### 🌐 Configuração de Webhooks (Ngrok)
+Como este projeto utiliza gatilhos externos (Gmail e Telegram), é necessário um túnel para que o n8n receba os eventos:
+
+1. Inicie o Ngrok na porta 5678: `ngrok http 5678`
+2. No arquivo `.env`, atualize a variável `WEBHOOK_URL` com o endereço gerado pelo Ngrok:
+   `WEBHOOK_URL=https://sua-url-gerada.ngrok-free.dev/`
+3. Reinicie o Docker para aplicar a nova URL.
 
 ---
 

@@ -1,0 +1,605 @@
+{
+  "name": "process-refund-logic-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5562738d-2e64-4881-bdea-559adc5e7d10",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ced62794-6424-4953-a67e-d4f6783431e3",
+      "name": "Webhook",
+      "webhookId": "5562738d-2e64-4881-bdea-559adc5e7d10"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "c132cf1e-4e09-4ea2-b668-8db536035703",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "FmZOBOmAxqJFOf7b",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"nome\": \"Alon\",\n  \"email\": \"alon@exemplo.com\",\n  \"produto_reembolso\": \"Software de Contabilidade\",\n  \"comentario\": \"O software é bom mas tive problemas pessoais\",\n  \"sentimento\": \"neutro\",\n  \"cliente_encontrado\": true,\n  \"nome_completo\": \"Alon Pinheiro\",\n  \"total_gasto_cliente\": 1000,\n  \"dias_desde_compra\": 15\n}\n\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        208
+      ],
+      "id": "fbc58a3d-1e9f-44db-8d36-bb8bbae974e1",
+      "name": "Structured Output Parser (json)"
+    },
+    {
+      "parameters": {
+        "content": "Standard Customer",
+        "height": 224,
+        "width": 448
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -192
+      ],
+      "id": "d28bef79-fd1b-4a35-a33c-c1949a580f27",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "VIP Customer\n\n",
+        "height": 208,
+        "width": 832,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        48
+      ],
+      "id": "bc3f8ac0-e5e1-4cbd-85d1-6a9702d4c686",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Complaining Customer",
+        "height": 208,
+        "width": 832,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        272
+      ],
+      "id": "bd778250-62b0-452d-a3ec-9318e269fe69",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Customer within the deadline",
+        "height": 224,
+        "width": 832,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        496
+      ],
+      "id": "2def5003-e705-44d1-acab-082458d9d6b1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Agent: Process Refund Logic').item.json.output.email }}",
+        "subject": "Retorno sobre sua solicitação de reembolso",
+        "message": "=Olá {{ $('Agent: Process Refund Logic').item.json.output.nome }}. \n\nRecebemos seu pedido de reembolso.\n\nVerificamos aqui que você ainda está dentro do prazo de garantia incondicional de 7 dias. 👍\n\nNossa equipe financeira já foi notificada e o processo será seguido conforme nossos termos.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        544
+      ],
+      "id": "1ee03df2-bd84-4688-8cbe-5b7f7c93c58b",
+      "name": "Gmail: Send Retention Email",
+      "webhookId": "a17d358e-f89f-491d-bddc-f872767ea1ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NxbeV0He7bqVnC3v",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Agent: Process Refund Logic').item.json.output.email }}",
+        "subject": "Retorno sobre sua solicitação de reembolso",
+        "message": "=Olá, {{ $('Agent: Process Refund Logic').item.json.output.nome }}. Analisei sua solicitação de reembolso. Verifiquei aqui que a compra foi efetuada há mais de 7 dias. Como o prazo de garantia incondicional é de 7 dias corridos, infelizmente não conseguiremos prosseguir com o reembolso. Caso tenha dúvidas sobre o acesso ou uso do produto, nossa equipe de suporte continua à disposição para te ajudar a tirar o melhor proveito dele. Atenciosamente, Alon",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        -144
+      ],
+      "id": "83ea6981-a7f7-41b1-9fbc-dd6fbea1ae4d",
+      "name": "Gmail: Send Deadline Expired Email",
+      "webhookId": "a17d358e-f89f-491d-bddc-f872767ea1ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NxbeV0He7bqVnC3v",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.SHEETS_REFUND_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $env.SHEETS_REFUND_TAB_NAME }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        224
+      ],
+      "id": "7f43d711-678d-4675-aecc-993dcbc143db",
+      "name": "Sheets: Read Customer Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PgnQ1Zyw4EDRnJks",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_REFUND_CHAT_ID}}",
+        "text": "=⚠️ Atenção aqui, gente.\n\nTemos um cliente que pediu reembolso fora do prazo, mas mandou uma mensagem bem pesada..\n\nO comentário dele foi esse: \"{{ $('Agent: Process Refund Logic').item.json.output.comentario }}\"\n\nPra evitar que ele vá pro Reclame Aqui ou procon, eu já respondi dizendo que escalei o caso pra gerência. Conseguem dar uma atenção pra esse caso por favor?\n\nCliente: {{ $('Agent: Process Refund Logic').item.json.output.nome }}\nE-mail: {{ $('Agent: Process Refund Logic').item.json.output.email }}\nProduto: {{ $('Agent: Process Refund Logic').item.json.output.produto_reembolso }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        304
+      ],
+      "id": "d71b9117-2143-4a6a-86f4-20e2562e242f",
+      "name": "Telegram: Complaining Customer Alert",
+      "webhookId": "ca31132e-67c4-466f-a4a6-d6c00fd59506",
+      "credentials": {
+        "telegramApi": {
+          "id": "I4l03XmJGXRPhP0C",
+          "name": "TELEGRAM_REFUND_BOT_TOKEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_REFUND_CHAT_ID}}",
+        "text": "=[Pedido de Reembolso fora do Prazo] \n\nPessoal, chegou um pedido de reembolso de um cliente que estourou o prazo de 7 dias (tá com {{ $('Agent: Process Refund Logic').item.json.output.dias_desde_compra }} dias).\n\nO sistema barrou, mas como ele é VIP, peço que verifiquem com atenção e avaliem reembolsar o aluno.\n\nAvisei pra ele que a gente ia analisar com carinho e dar um retorno em 24h. Conseguem ver com o financeiro se liberamos essa exceção pra não perder o cliente?\n\nCliente: {{ $('Agent: Process Refund Logic').item.json.output.nome }}\nE-mail: {{ $('Agent: Process Refund Logic').item.json.output.email }}\nProduto: {{ $('Agent: Process Refund Logic').item.json.output.produto_reembolso }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        80
+      ],
+      "id": "2395ae37-9046-4bf3-9134-2074f73e2209",
+      "name": "Telegram: VIP Customer Alert",
+      "webhookId": "ca31132e-67c4-466f-a4a6-d6c00fd59506",
+      "credentials": {
+        "telegramApi": {
+          "id": "I4l03XmJGXRPhP0C",
+          "name": "TELEGRAM_REFUND_BOT_TOKEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Agent: Process Refund Logic').item.json.output.email }}",
+        "subject": "Atualização sobre seu pedido de reembolso",
+        "message": "=Olá, {{ $('Agent: Process Refund Logic').item.json.output.nome }}.\nRecebi sua solicitação de reembolso. Notei que o prazo contratual de 7 dias já expirou, que é o prazo de garantia do produto.\nPorém, como você é um dos nossos melhores clientes, não quero encerrar seu caso automaticamente. Encaminhei seu pedido pessoalmente para a nossa equipe financeira analisar uma exceção.\nEm até 24h a nossa equipe entrará em contato com você para dar um retorno.\nAtenciosamente, \nAlon",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        80
+      ],
+      "id": "c52d1c3f-3fc6-429e-9f98-2933dc2bc355",
+      "name": "Gmail: Send VIP Refund Notification",
+      "webhookId": "a17d358e-f89f-491d-bddc-f872767ea1ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NxbeV0He7bqVnC3v",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Agent: Process Refund Logic').item.json.output.email }}",
+        "subject": "Recebemos sua mensagem - Caso escalado para a Gerência",
+        "message": "=Olá, {{ $('Agent: Process Refund Logic').item.json.output.nome }}.\nLi atentamente seu comentário e lamento sua insatisfação.\nO sistema identificou que a compra está fora do prazo de garantia de 7 dias. No entanto, dada a seriedade do seu relato, optei por não finalizar o atendimento por aqui.\nEscalei seu caso com prioridade para o nosso gerente de suporte. Ele vai analisar a situação e retornará o contato o mais breve possível para resolvermos isso.\nAtenciosamente, \nAlon",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        304
+      ],
+      "id": "507c4dbf-b4a9-473a-8caa-0e631c66d3cd",
+      "name": "Gmail: Send Critical Support Reply",
+      "webhookId": "a17d358e-f89f-491d-bddc-f872767ea1ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "NxbeV0He7bqVnC3v",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_REFUND_CHAT_ID}}",
+        "text": "=[Pedido de Reembolso]\n\nPessoal, chegou um pedido de reembolso de um cliente dentro do prazo de 7 dias.\n\nO comentário dele foi esse: \"{{ $('Agent: Process Refund Logic').item.json.output.comentario }}\"\n\nCliente: {{ $('Agent: Process Refund Logic').item.json.output.nome }}\nE-mail: {{ $('Agent: Process Refund Logic').item.json.output.email }}\nProduto: {{ $('Agent: Process Refund Logic').item.json.output.produto_reembolso }}",
+        "replyMarkup": "=none",
+        "forceReply": {},
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        544
+      ],
+      "id": "63b00939-1382-4cfb-bd82-2173db954836",
+      "name": "Telegram: Alert New Refund Request",
+      "webhookId": "ca31132e-67c4-466f-a4a6-d6c00fd59506",
+      "credentials": {
+        "telegramApi": {
+          "id": "I4l03XmJGXRPhP0C",
+          "name": "TELEGRAM_REFUND_BOT_TOKEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.data.fields }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Você é um agente que processa respostas de um formulário de reembolso.\n\nVocê deve trabalhar apenas com os dados recebidos na entrada e pela planilha contida na tool.\n\nAs informações que você irá precisar retornar são as seguintes:\n\n- nome: Nome do cliente proveniente do formulário\n- email: E-mail do cliente proveniente do formulário\n- produto_reembolso: De qual produto o cliente está pedindo reembolso, proveniente do formulário\n- comentario: Comentário por escrito do cliente, proveniente do formulário\n- sentimento: Uma análise de sentimento a partir do comentário do cliente no formulário (instruções mais à frente no prompt)\n- cliente_encontrado: uma informação de verdadeiro ou falso informando se encontrou o cliente na planilha (tool)\n- nome_completo: Nome do cliente proveniente da planilha (tool)\n- total_gasto_cliente: Valor total gasto pelo cliente proveniente da planilha (tool)\n- dias_desde_compra: há quantos dias o cliente fez a última compra, calculado a partir dos dados da planilha (instruções mais à frente no prompt)\n\n\n\nSiga rigorosamente as etapas abaixo.\n\n---\n\n### 1) Extração dos campos do formulário\nExtraia os seguintes campos da resposta do formulário:\n- Nome\n- Email\n- Qual produto que você deseja reembolso?\n- Comente aqui o que houve\n\nSe algum campo de texto não existir, retorne um texto vazio \"\".\n\n---\n\n### 2) Busca do cliente na base\n- Normalize o email (trim + lowercase).\n- Use o email como ÚNICA chave para buscar o cliente na base (Google Sheets) via tool.\n- Nunca invente dados do cliente.\n\n- Se encontrar o cliente:\n  - cliente_encontrado = true\n  - Preencha com os dados exatos da planilha:\n    - nome_completo: valor da coluna \"nome_cliente\"\n    - total_gasto_cliente: valor da coluna \"total_gasto_cliente\"\n\n- Se não encontrar o cliente na planilha:\n  - cliente_encontrado = false\n  - nome_completo: “”\n  - total_gasto_cliente: “”\n\n\n\n\n---\n\n### 3) Datas e prazo\n- Calcule a informação dias_desde_compra, subtraindo a data atual da data da última compra do cliente\n- A data da última compra vem da planilha na tool na coluna data_ultima_compra.\n- A data atual: {{ $now }}\n- Considere apenas a parte da data (dia/mês/ano) e ignore o horário\n- Você NÃO deve gerar data atual por conta própria.\n\nCom essas duas datas:\n- Calcule a quantidade de dias corridos entre data_atual e data_ultima_compra.\n- O cálculo deve considerar apenas dias corridos.\n- Se data_ultima_compra ou data_atual não existirem, dias_desde_compra deve ser 0 (zero).\n\n⚠️ Importante:\n- Você NÃO deve decidir aprovação ou negação de reembolso.\n- Apenas calcule e informe os dias desde a compra.\n\n---\n\n### 4) Análise de sentimento\nAnalise exclusivamente o texto do campo \"Comente aqui o que houve\" e classifique em:\n- positivo\n- neutro\n- negativo\n- muito_negativo\n\nCritérios:\nPOSITIVO: Texto educado ou positivo.\nNEUTRO: Texto objetivo, calmo ou vazio.\nNEGATIVO: Frustração clara ou tom ríspido.\nMUITO_NEGATIVO: Agressivo, xingamentos, ameaças de procon, processos, reclame aqui ou outros tipos de ameaça ou CAPS LOCK.\n\nNa dúvida entre negativo e muito negativo, seja conservador, escolha negativo.\n\n---\n\n### 5) Formato de saída (OBRIGATÓRIO)\nRetorne APENAS um JSON cru.\nNÃO use markdown (sem ```json).\n\nExemplo de estrutura desejada:\n\n{\n  \"nome\": \"Texto ou vazio\",\n  \"email\": \"Texto ou vazio\",\n  \"produto_reembolso\": \"Texto ou vazio\",\n  \"comentario\": \"Texto ou vazio\",\n  \"sentimento\": \"Texto ou vazio\",\n  \"cliente_encontrado\": true ou false,\n  \"nome_completo\": \"Texto ou vazio\",\n  \"total_gasto_cliente\": numero,\n  \"dias_desde_compra\": numero,\n  }\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "06fca38d-a028-4235-a7b1-36605822c535",
+      "name": "Agent: Process Refund Logic"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8cbd75b5-4585-4a19-93d5-9fd0dd870979",
+              "leftValue": "={{ $json.output.dias_desde_compra }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        560,
+        0
+      ],
+      "id": "12ef0a2e-6997-4af8-908b-5e4fe0591a0b",
+      "name": "IF: Refund Deadline Expired?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "75f80ee2-7f13-441f-9555-5cf8c2952d42",
+              "leftValue": "={{ $('Agent: Process Refund Logic').item.json.output.total_gasto_cliente }}",
+              "rightValue": 3000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "6f0c4af1-9546-4e1f-9e5d-65c2c96cf370",
+              "leftValue": "={{ $('Agent: Process Refund Logic').item.json.output.sentimento }}",
+              "rightValue": "muito_negativo",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        -144
+      ],
+      "id": "463f946a-f200-4d1a-8654-945fd32eb280",
+      "name": "IF: Standard Customer?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9fa5c00e-b3b6-40bb-af42-eafcdf1454f5",
+              "leftValue": "={{ $('Agent: Process Refund Logic').item.json.output.total_gasto_cliente }}",
+              "rightValue": 3000,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        992,
+        80
+      ],
+      "id": "6f4ff1ae-9f1c-493f-be92-ea465ad9d03a",
+      "name": "IF: Is VIP?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Agent: Process Refund Logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent: Process Refund Logic",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser (json)": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agent: Process Refund Logic",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail: Send Retention Email": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Alert New Refund Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Read Customer Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent: Process Refund Logic",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail: Send VIP Refund Notification": {
+      "main": [
+        [
+          {
+            "node": "Telegram: VIP Customer Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail: Send Critical Support Reply": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Complaining Customer Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent: Process Refund Logic": {
+      "main": [
+        [
+          {
+            "node": "IF: Refund Deadline Expired?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Refund Deadline Expired?": {
+      "main": [
+        [
+          {
+            "node": "IF: Standard Customer?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail: Send Retention Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Standard Customer?": {
+      "main": [
+        [
+          {
+            "node": "Gmail: Send Deadline Expired Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF: Is VIP?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Is VIP?": {
+      "main": [
+        [
+          {
+            "node": "Gmail: Send VIP Refund Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail: Send Critical Support Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4e6ad1d9-5fa2-4ed2-beb9-b09de5be8a67",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4004670ac617537af420e4129083d7de4e101ab20ab4b985d34b8a26a67db638"
+  },
+  "id": "acSwxzE30DlhTUn2Yw2pP",
+  "tags": []
+}

@@ -40,3 +40,15 @@ Thumbs.db
 # Node / Geral
 # =========================
 node_modules/
+
+# ================================================
+# n8n Específico (Proteção de Banco e Binários)
+# ================================================
+.n8n/
+binaryData/
+
+# ===============================
+# Regra de Segurança para JSON
+# ===============================
+*.json
+!workflows/**/*.json
